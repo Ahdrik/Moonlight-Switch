@@ -83,7 +83,11 @@ MoonlightInputManager::MoonlightInputManager() {
             
             switch (event.type) {
                 case brls::SensorEventType::ACCEL:
-                    LiSendControllerMotionEvent((uint8_t)event.controllerIndex, LI_MOTION_TYPE_ACCEL, event.data[0], event.data[1], event.data[2]);
+                    // libnx reports acceleration in G, Moonlight expects m/s^2
+LiSendControllerMotionEvent((uint8_t)event.controllerIndex, LI_MOTION_TYPE_ACCEL,
+    event.data[0] * 9.80665f,
+    event.data[1] * 9.80665f,
+    event.data[2] * 9.80665f);
                     break;
                 case brls::SensorEventType::GYRO:
                     // Convert rad/s to deg/s
